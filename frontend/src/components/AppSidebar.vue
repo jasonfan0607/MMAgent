@@ -117,7 +117,7 @@ const socialMedia = [
     </SidebarFooter>
     <SidebarFooter>
       <!-- 展示图标社交媒体  -->
-      <div class="flex items-center gap-4 justify-centermb-4 border-t  border-light-purple pt-3">
+      <div class="flex items-center gap-4 justify-center mb-4 border-t border-apple-hairline pt-3">
         <a v-for="item in socialMedia" :href="item.url" target="_blank">
           <img :src="item.icon" :alt="item.name" width="24" height="24" class="icon">
         </a>

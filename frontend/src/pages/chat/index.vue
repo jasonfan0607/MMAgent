@@ -52,18 +52,28 @@ onMounted(() => {
         </div>
       </header>
 
-      <div class="py-5 px-4">
-        <div class="space-y-6">
-          <div class="text-center space-y-2 mb-10">
-            <h1 class="text-2xl font-semibold">MathModelAgent</h1>
-            <p class="text-muted-foreground">
-              让 Agent 数学建模，代码编写，论文写作
+      <div class="px-6 sm:px-10 py-8 sm:py-14 max-w-[1080px] mx-auto w-full">
+        <div class="space-y-10">
+          <div class="text-center space-y-4 mb-12">
+            <p class="font-display text-caption-strong uppercase tracking-[0.18em] text-apple-ink-48">
+              New Project
+            </p>
+            <h1
+              class="font-display font-semibold text-apple-ink
+                     text-[40px] sm:text-[56px]
+                     leading-[1.07] tracking-[-0.028em]"
+            >
+              新建一次建模任务。
+            </h1>
+            <p class="font-sans text-lead text-apple-ink-80 max-w-[640px] mx-auto">
+              提交题目，四个 Agent 会接力完成建模、编码与写作。
             </p>
           </div>
 
           <UserStepper>
           </UserStepper>
-          <div class="text-center text-xs text-muted-foreground mt-8">
+
+          <div class="text-center font-sans text-fine-print text-apple-ink-48 pt-4">
             项目处于内测阶段，欢迎进群反馈
           </div>
           <ModelingExamples />

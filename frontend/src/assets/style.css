@@ -2,84 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ... */
+/*
+ * Apple-style design tokens
+ * 参考 Apple.md：Action Blue 单一强调色、SF Pro 字体栈、负字距标题、
+ * 全屏 tile 明暗交替、几乎零阴影（仅产品图保留 product-shadow）。
+ */
 
 @layer base {
 	:root {
-		--background: 0 0% 100%;
-		--foreground: 224 71.4% 4.1%;
+		/* ---- shadcn-vue HSL tokens（被 ui/ 组件库消费，不要改名） ---- */
+		--background: 0 0% 100%; /* canvas #ffffff */
+		--foreground: 240 6% 12%; /* ink #1d1d1f */
 
 		--card: 0 0% 100%;
-		--card-foreground: 224 71.4% 4.1%;
+		--card-foreground: 240 6% 12%;
 
 		--popover: 0 0% 100%;
-		--popover-foreground: 224 71.4% 4.1%;
+		--popover-foreground: 240 6% 12%;
 
-		--primary: 262.1 83.3% 57.8%;
-		--primary-foreground: 210 20% 98%;
+		/* Action Blue #0066cc */
+		--primary: 210 100% 40%;
+		--primary-foreground: 0 0% 100%;
 
-		--secondary: 220 14.3% 95.9%;
-		--secondary-foreground: 220.9 39.3% 11%;
+		/* Parchment #f5f5f7 */
+		--secondary: 240 12% 96%;
+		--secondary-foreground: 240 6% 12%;
 
-		--muted: 220 14.3% 95.9%;
-		--muted-foreground: 220 8.9% 46.1%;
+		--muted: 240 12% 96%;
+		--muted-foreground: 240 1% 48%; /* ink-muted-48 #7a7a7a */
 
-		--accent: 220 14.3% 95.9%;
-		--accent-foreground: 220.9 39.3% 11%;
+		--accent: 240 12% 96%;
+		--accent-foreground: 240 6% 12%;
 
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 210 20% 98%;
+		--destructive: 0 84% 60%;
+		--destructive-foreground: 0 0% 100%;
 
-		--border: 220 13% 91%;
-		--input: 220 13% 91%;
-		--ring: 262.1 83.3% 57.8%;
-		--radius: 0.5rem;
-		--sidebar-background: 0 0% 98%;
-		--sidebar-foreground: 240 5.3% 26.1%;
-		--sidebar-primary: 240 5.9% 10%;
-		--sidebar-primary-foreground: 0 0% 98%;
-		--sidebar-accent: 240 4.8% 95.9%;
-		--sidebar-accent-foreground: 240 5.9% 10%;
-		--sidebar-border: 220 13% 91%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
+		--border: 0 0% 88%; /* hairline #e0e0e0 */
+		--input: 0 0% 88%;
+		--ring: 211 100% 44.5%; /* focus blue #0071e3 */
+		--radius: 0.5rem; /* 8px = rounded.sm */
+
+		/* sidebar 自适应到主色板 */
+		--sidebar-background: 240 12% 96%; /* parchment */
+		--sidebar-foreground: 240 6% 12%;
+		--sidebar-primary: 210 100% 40%;
+		--sidebar-primary-foreground: 0 0% 100%;
+		--sidebar-accent: 0 0% 100%;
+		--sidebar-accent-foreground: 240 6% 12%;
+		--sidebar-border: 0 0% 88%;
+		--sidebar-ring: 211 100% 44.5%;
+
+		/* ---- Apple 设计语言原生变量（在自定义页面直接用） ---- */
+		--apple-action-blue: #0066cc;
+		--apple-focus-blue: #0071e3;
+		--apple-sky-blue: #2997ff;
+		--apple-ink: #1d1d1f;
+		--apple-ink-muted-80: #333333;
+		--apple-ink-muted-48: #7a7a7a;
+		--apple-canvas: #ffffff;
+		--apple-parchment: #f5f5f7;
+		--apple-pearl: #fafafc;
+		--apple-tile-1: #272729;
+		--apple-tile-2: #2a2a2c;
+		--apple-tile-3: #252527;
+		--apple-black: #000000;
+		--apple-body-muted: #cccccc;
+		--apple-hairline: #e0e0e0;
+		--apple-divider: #f0f0f0;
+
+		/* 系统中唯一的阴影，仅作用于产品图 */
+		--apple-product-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0;
 	}
 
 	.dark {
-		--background: 224 71.4% 4.1%;
-		--foreground: 210 20% 98%;
-
-		--card: 224 71.4% 4.1%;
-		--card-foreground: 210 20% 98%;
-
-		--popover: 224 71.4% 4.1%;
-		--popover-foreground: 210 20% 98%;
-
-		--primary: 263.4 70% 50.4%;
-		--primary-foreground: 210 20% 98%;
-
-		--secondary: 215 27.9% 16.9%;
-		--secondary-foreground: 210 20% 98%;
-
-		--muted: 215 27.9% 16.9%;
-		--muted-foreground: 217.9 10.6% 64.9%;
-
-		--accent: 215 27.9% 16.9%;
-		--accent-foreground: 210 20% 98%;
-
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 20% 98%;
-
-		--border: 215 27.9% 16.9%;
-		--input: 215 27.9% 16.9%;
-		--ring: 263.4 70% 50.4%;
-		--sidebar-background: 240 5.9% 10%;
-		--sidebar-foreground: 240 4.8% 95.9%;
-		--sidebar-primary: 224.3 76.3% 48%;
+		--background: 240 3% 16%; /* tile-1 */
+		--foreground: 0 0% 100%;
+		--card: 240 3% 16%;
+		--card-foreground: 0 0% 100%;
+		--popover: 240 3% 16%;
+		--popover-foreground: 0 0% 100%;
+		--primary: 211 100% 58%; /* sky blue on dark */
+		--primary-foreground: 0 0% 100%;
+		--secondary: 240 3% 17%;
+		--secondary-foreground: 0 0% 100%;
+		--muted: 240 3% 17%;
+		--muted-foreground: 0 0% 80%;
+		--accent: 240 3% 17%;
+		--accent-foreground: 0 0% 100%;
+		--destructive: 0 62% 31%;
+		--destructive-foreground: 0 0% 100%;
+		--border: 240 3% 22%;
+		--input: 240 3% 22%;
+		--ring: 211 100% 58%;
+		--sidebar-background: 240 3% 16%;
+		--sidebar-foreground: 0 0% 100%;
+		--sidebar-primary: 211 100% 58%;
 		--sidebar-primary-foreground: 0 0% 100%;
-		--sidebar-accent: 240 3.7% 15.9%;
-		--sidebar-accent-foreground: 240 4.8% 95.9%;
-		--sidebar-border: 240 3.7% 15.9%;
-		--sidebar-ring: 217.2 91.2% 59.8%;
+		--sidebar-accent: 240 3% 17%;
+		--sidebar-accent-foreground: 0 0% 100%;
+		--sidebar-border: 240 3% 22%;
+		--sidebar-ring: 211 100% 58%;
 	}
 }
 
@@ -87,7 +109,103 @@
 	* {
 		@apply border-border;
 	}
+
+	html {
+		/* SF Pro 在 Apple 系统上直接生效；非 Apple 平台回退到 Inter（接近开源替代） */
+		font-family:
+			-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+			"Inter Variable", "Inter", system-ui, "Segoe UI", "PingFang SC",
+			"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-rendering: optimizeLegibility;
+	}
+
 	body {
 		@apply bg-background text-foreground;
+		font-feature-settings: "ss03", "cv11";
+	}
+
+	/* 标题统一负字距，复刻"Apple tight"节奏 */
+	h1,
+	h2,
+	h3,
+	.apple-display {
+		font-family:
+			-apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Variable",
+			"Inter", system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+		letter-spacing: -0.022em;
+	}
+}
+
+/* ---- Apple-style 工具类，可直接在 template 中复用 ---- */
+@layer components {
+	.apple-pill {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 11px 22px;
+		border-radius: 9999px;
+		background-color: var(--apple-action-blue);
+		color: #ffffff;
+		font-size: 17px;
+		font-weight: 400;
+		line-height: 1;
+		letter-spacing: -0.374px;
+		transition: transform 0.15s ease;
+	}
+	.apple-pill:hover {
+		background-color: var(--apple-focus-blue);
+	}
+	.apple-pill:active {
+		transform: scale(0.95);
+	}
+	.apple-pill:focus-visible {
+		outline: 2px solid var(--apple-focus-blue);
+		outline-offset: 3px;
+	}
+
+	.apple-pill-ghost {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 11px 22px;
+		border-radius: 9999px;
+		background-color: transparent;
+		color: var(--apple-action-blue);
+		border: 1px solid var(--apple-action-blue);
+		font-size: 17px;
+		font-weight: 400;
+		line-height: 1;
+		letter-spacing: -0.374px;
+		transition: transform 0.15s ease;
+	}
+	.apple-pill-ghost:active {
+		transform: scale(0.95);
+	}
+
+	.apple-pill-on-dark {
+		color: var(--apple-sky-blue);
+		border-color: var(--apple-sky-blue);
+	}
+
+	.apple-link {
+		color: var(--apple-action-blue);
+		font-size: 17px;
+		line-height: 1.47;
+		letter-spacing: -0.374px;
+	}
+	.apple-link:hover {
+		text-decoration: underline;
+	}
+	.apple-link-on-dark {
+		color: var(--apple-sky-blue);
+	}
+
+	/* 产品图专用阴影 —— 整个系统中唯一允许的 drop-shadow */
+	.apple-product-shadow {
+		box-shadow: var(--apple-product-shadow);
 	}
 }
