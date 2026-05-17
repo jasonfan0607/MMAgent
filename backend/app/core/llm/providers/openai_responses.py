@@ -19,7 +19,12 @@ class OpenAIResponsesProvider(BaseProvider):
         max_tokens: int | None = None,
         top_p: float | None = None,
     ) -> StandardResponse:
-        client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+        client = AsyncOpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=180.0,
+            max_retries=0,
+        )
 
         input_items = self._messages_to_input(messages)
 

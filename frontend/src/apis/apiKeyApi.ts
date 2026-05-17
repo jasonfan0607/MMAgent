@@ -59,7 +59,9 @@ export interface ValidateOpenalexEmailResponse {
  * @param params 验证请求参数
  */
 export function validateApiKey(params: ValidateApiKeyRequest) {
-	return request.post<ValidateApiKeyResponse>("/validate-api-key", params);
+	return request.post<ValidateApiKeyResponse>("/validate-api-key", params, {
+		timeout: 40000,
+	});
 }
 
 /**

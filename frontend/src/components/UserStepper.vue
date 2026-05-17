@@ -105,10 +105,20 @@ const router = useRouter();
 /** 提交建模任务 */
 const handleSubmit = async () => {
 	try {
-		if (apiKeyStore.isEmpty) {
+		const requiredAgentConfigLabels = [
+			{ label: "协调者", config: apiKeyStore.coordinatorConfig },
+			{ label: "建模手", config: apiKeyStore.modelerConfig },
+			{ label: "代码手", config: apiKeyStore.coderConfig },
+			{ label: "论文手", config: apiKeyStore.writerConfig },
+		];
+		const missingModelConfigs = requiredAgentConfigLabels
+			.filter(({ config }) => !config.apiKey.trim() || !config.modelId.trim())
+			.map(({ label }) => label);
+
+		if (missingModelConfigs.length > 0) {
 			toast({
-				title: "请先配置 API Key",
-				description: "在侧边栏 -> 头像 -> API Key 中配置 API Key",
+				title: "请先完整配置模型",
+				description: `缺少配置：${missingModelConfigs.join("、")}。请在侧边栏 -> 头像 -> API Key 中填写 API Key 和 Model ID`,
 				variant: "destructive",
 			});
 			return;

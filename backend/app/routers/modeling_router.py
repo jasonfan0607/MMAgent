@@ -58,6 +58,33 @@ class SaveApiConfigRequest(BaseModel):
     openalex_email: str
 
 
+def _missing_model_config() -> list[str]:
+    """检查启动任务所需的大模型配置是否完整。"""
+    checks = [
+        ("协调者", settings.COORDINATOR_API_KEY, settings.COORDINATOR_MODEL),
+        ("建模手", settings.MODELER_API_KEY, settings.MODELER_MODEL),
+        ("代码手", settings.CODER_API_KEY, settings.CODER_MODEL),
+        ("论文手", settings.WRITER_API_KEY, settings.WRITER_MODEL),
+    ]
+    missing: list[str] = []
+    for name, api_key, model in checks:
+        if not api_key or not str(api_key).strip():
+            missing.append(f"{name} API Key")
+        if not model or not str(model).strip():
+            missing.append(f"{name} Model ID")
+    return missing
+
+
+def _ensure_model_configured() -> None:
+    """在后台任务启动前阻止缺失配置，避免任务进入无限重试。"""
+    missing = _missing_model_config()
+    if missing:
+        raise HTTPException(
+            status_code=400,
+            detail=f"请先在设置中完整配置模型参数：{', '.join(missing)}",
+        )
+
+
 @router.post("/save-api-config")
 async def save_api_config(request: SaveApiConfigRequest):
     """
@@ -187,6 +214,8 @@ async def exampleModeling(
     example_request: ExampleRequest,
     background_tasks: BackgroundTasks,
 ):
+    _ensure_model_configured()
+
     task_id = create_task_id()
     work_dir = create_work_dir(task_id)
     example_dir = os.path.join("app", "example", "example", example_request.source)
@@ -223,6 +252,8 @@ async def modeling(
     format_output: FormatOutPut = Form(...),  # 从表单获取
     files: list[UploadFile] = File(default=None),
 ):
+    _ensure_model_configured()
+
     task_id = create_task_id()
     work_dir = create_work_dir(task_id)
 
@@ -300,15 +331,22 @@ async def run_modeling_task_async(
     # 给一个短暂的延迟，确保 WebSocket 有机会连接
     await asyncio.sleep(1)
 
-    # 创建任务并等待它完成
-    task = asyncio.create_task(MathModelWorkFlow().execute(problem))
-    # 设置超时时间（比如 300 分钟）
-    await asyncio.wait_for(task, timeout=3600 * 5)
+    try:
+        # 创建任务并等待它完成
+        task = asyncio.create_task(MathModelWorkFlow().execute(problem))
+        # 设置超时时间（比如 300 分钟）
+        await asyncio.wait_for(task, timeout=3600 * 5)
 
-    # 发送任务完成状态
-    await redis_manager.publish_message(
-        task_id,
-        SystemMessage(content="任务处理完成", type="success"),
-    )
-    # 转换md为docx
-    md_2_docx(task_id)
+        # 发送任务完成状态
+        await redis_manager.publish_message(
+            task_id,
+            SystemMessage(content="任务处理完成", type="success"),
+        )
+        # 转换md为docx
+        md_2_docx(task_id)
+    except Exception as e:
+        logger.error(f"任务处理失败: {str(e)}")
+        await redis_manager.publish_message(
+            task_id,
+            SystemMessage(content=f"任务处理失败: {str(e)}", type="error"),
+        )

@@ -20,7 +20,12 @@ class AnthropicProvider(BaseProvider):
         max_tokens: int | None = None,
         top_p: float | None = None,
     ) -> StandardResponse:
-        client = AsyncAnthropic(api_key=api_key, base_url=base_url)
+        client = AsyncAnthropic(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=180.0,
+            max_retries=0,
+        )
 
         system_prompt, anthropic_messages = self._convert_messages(messages)
 

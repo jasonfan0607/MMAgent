@@ -105,11 +105,6 @@ const validationResults = ref({
 
 // ---- Computed ----
 
-/** 判断所有验证是否都通过 */
-const allValid = computed(() => {
-	return Object.values(validationResults.value).every((result) => result.valid);
-});
-
 /** 模型配置列表 */
 const modelConfigs = computed(() => [
 	{ key: "coordinator", label: "协调者模型配置" },
@@ -117,6 +112,14 @@ const modelConfigs = computed(() => [
 	{ key: "coder", label: "代码手模型配置" },
 	{ key: "writer", label: "论文手模型配置" },
 ]);
+
+/** 判断是否已填写启动任务所需的大模型配置 */
+const allModelConfigsFilled = computed(() => {
+	return modelConfigs.value.every((config) => {
+		const value = form.value[config.key as keyof typeof form.value] as AgentFormConfig;
+		return value.apiKey.trim() && value.modelId.trim();
+	});
+});
 
 // ---- Methods ----
 
@@ -136,7 +139,7 @@ const saveToStore = async () => {
 	apiKeyStore.setCoderConfig(form.value.coder);
 	apiKeyStore.setWriterConfig(form.value.writer);
 	apiKeyStore.setOpenalexEmail(form.value.openalex_email);
-	if (allValid.value) {
+	if (allModelConfigsFilled.value) {
 		try {
 			await saveApiConfig({
 				coordinator: form.value.coordinator,

@@ -1,9 +1,9 @@
 """LLM 交互模块，封装大语言模型的调用、重试和消息发送。"""
 
 from typing import Any
+import asyncio
 from app.utils.common_utils import transform_link, split_footnotes
 from app.utils.log_util import logger
-import time
 from app.schemas.response import (
     CoderMessage,
     WriterMessage,
@@ -13,12 +13,16 @@ from app.schemas.response import (
 )
 from app.services.redis_manager import redis_manager
 from app.schemas.enums import AgentType
-from app.config.setting import ApiType
+from app.config.setting import ApiType, settings
 from app.core.llm.types import StandardResponse
 from app.core.llm.providers.base import BaseProvider
 from app.core.llm.providers.openai_chat import OpenAIChatProvider
 from app.core.llm.providers.openai_responses import OpenAIResponsesProvider
 from app.core.llm.providers.anthropic import AnthropicProvider
+
+
+class LLMConfigError(RuntimeError):
+    """LLM 配置缺失或无效。"""
 
 
 class LLM:
@@ -56,9 +60,9 @@ class LLM:
     def _validate_config(self, agent_name: str) -> None:
         """验证 LLM 配置是否完整。"""
         if not self.model or not str(self.model).strip():
-            raise ValueError(f"{agent_name} 未配置模型 ID，请设置对应的 *_MODEL")
+            raise LLMConfigError(f"{agent_name} 未配置模型 ID，请设置对应的 *_MODEL")
         if not self.api_key or not str(self.api_key).strip():
-            raise ValueError(f"{agent_name} 未配置 API Key，请设置对应的 *_API_KEY")
+            raise LLMConfigError(f"{agent_name} 未配置 API Key，请设置对应的 *_API_KEY")
 
     async def chat(
         self,
@@ -80,6 +84,11 @@ class LLM:
         messages = history or []
 
         attempt = 0
+        effective_max_retries = (
+            max_retries if max_retries is not None else settings.MAX_RETRIES
+        )
+        if effective_max_retries is None:
+            effective_max_retries = 3
         while True:
             try:
                 response = await self.provider.call(
@@ -99,9 +108,9 @@ class LLM:
             except Exception as e:
                 attempt += 1
                 logger.error(f"第{attempt}次重试: {str(e)}")
-                if max_retries is not None and attempt >= max_retries:
+                if attempt >= effective_max_retries:
                     raise
-                time.sleep(retry_delay * min(attempt, 10))
+                await asyncio.sleep(retry_delay * min(attempt, 10))
 
     def _validate_and_fix_tool_calls(self, history: list) -> list:
         """验证并修复工具调用完整性。"""
