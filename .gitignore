@@ -8,3 +8,6 @@
 settings.local.json
 dump.rdb
 backend/.env.dev
+generated_images/
+generated_report.docx
+generated_report.md
